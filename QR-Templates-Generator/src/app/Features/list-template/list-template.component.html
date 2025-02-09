@@ -1,0 +1,264 @@
+<div>
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <h2 class="text-xl">Templates</h2>
+      <div class="flex w-full flex-col gap-4 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
+        <div class="flex gap-3">
+          <div>
+            <button type="button" class="btn btn-primary" (click)="editTemplate()">
+              <icon-user-plus class="ltr:mr-2 rtl:ml-2" />
+              Add Template
+            </button>
+          </div>
+          <div>
+            <button
+              type="button"
+              class="btn btn-outline-primary p-2"
+              [ngClass]="{ 'bg-primary text-white': displayType === 'list' }"
+              (click)="displayType = 'list'"
+            >
+              <icon-list-check />
+            </button>
+          </div>
+          <div>
+            <button
+              type="button"
+              class="btn btn-outline-primary p-2"
+              [ngClass]="{ 'bg-primary text-white': displayType === 'grid' }"
+              (click)="displayType = 'grid'"
+            >
+              <icon-layout-grid />
+            </button>
+          </div>
+        </div>
+  
+        <div class="relative">
+          <input
+            type="text"
+            placeholder="Search Templates"
+            class="peer form-input py-2 ltr:pr-11 rtl:pl-11"
+            [(ngModel)]="searchTemplate"
+            name="searchTemplate"
+            (ngModelChange)="searchTemplates()"
+          />
+          <div class="absolute top-1/2 -translate-y-1/2 peer-focus:text-primary ltr:right-[11px] rtl:left-[11px]">
+            <icon-search class="mx-auto" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel mt-5 overflow-hidden border-0 p-0">
+      <ng-container *ngIf="displayType === 'list'">
+        <div class="table-responsive">
+          <table class="table-striped table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Unique Code</th>
+                <th class="!text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let template of filteredTemplateList" key="template.id">
+                <tr>
+                  <td>{{ template.id }}</td>
+                  <td>{{ template.title }}</td>
+                  <td>{{ template.uniqeCode }}</td>
+                  <td>
+                    <div class="flex items-center justify-center gap-4">
+                      <button type="button" class="btn btn-sm btn-outline-primary" (click)="editTemplate(template)">Edit</button>
+                      <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteTemplate(template)">Delete</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary" (click)="loadSections(template.id)">View Sections</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="template.sections">
+                  <td colspan="4">
+                    <div class="section-list">
+                      <div *ngFor="let section of template.sections" class="section-item">
+                        <h3>{{ section.title }}</h3>
+                        <p>Type: {{ section.type }}</p>
+                        <div class="section-actions">
+                          <button type="button" class="btn btn-sm btn-outline-primary" (click)="editSection(template.id, section)">Edit Section</button>
+                          <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteSection(template.id, section.id)">Delete Section</button>
+                          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="loadFields(section)">View Fields</button>
+                        </div>
+                        <div *ngIf="section.fields" class="field-list">
+                          <div *ngFor="let field of section.fields" class="field-item">
+                            <h4>{{ field.title }}</h4>
+                            <p>Type: {{ field.type }}</p>
+                            <p>Required: {{ field.isRequired ? 'Yes' : 'No' }}</p>
+                            <div class="field-actions">
+                              <button type="button" class="btn btn-sm btn-outline-primary" (click)="editField(section, field)">Edit Field</button>
+                              <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteField(section, field.id)">Delete Field</button>
+                            </div>
+                          </div>
+                          <button type="button" class="btn btn-sm btn-outline-success" (click)="editField(section)">Add Field</button>
+                        </div>
+                      </div>
+                      <button type="button" class="btn btn-sm btn-outline-success" (click)="editSection(template.id)">Add Section</button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    </div>
+    <ng-container *ngIf="displayType === 'grid'">
+      <div class="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <ng-container *ngFor="let template of filteredTemplateList" key="template.id">
+          <div class="relative overflow-hidden rounded-md bg-white text-center shadow dark:bg-[#1c232f]">
+            <div class="relative -mt-10 px-6 pb-24">
+              <div class="rounded-md bg-white px-2 py-4 shadow-md dark:bg-gray-900">
+                <div class="text-xl">{{ template.title }}</div>
+                <div class="text-white-dark">{{ template.uniqeCode }}</div>
+              </div>
+              <div class="absolute bottom-0 mt-6 flex w-full gap-4 p-6 ltr:left-0 rtl:right-0">
+                <button type="button" class="btn btn-outline-primary w-1/2" (click)="editTemplate(template)">Edit</button>
+                <button type="button" class="btn btn-outline-danger w-1/2" (click)="deleteTemplate(template)">Delete</button>
+              </div>
+              <div class="section-list mt-4">
+                <div *ngFor="let section of template.sections" class="section-item">
+                  <h3>{{ section.title }}</h3>
+                  <p>Type: {{ section.type }}</p>
+                  <div class="section-actions">
+                    <button type="button" class="btn btn-sm btn-outline-primary" (click)="editSection(template.id, section)">Edit Section</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteSection(template.id, section.id)">Delete Section</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="loadFields(section)">View Fields</button>
+                  </div>
+                  <div *ngIf="section.fields" class="field-list">
+                    <div *ngFor="let field of section.fields" class="field-item">
+                      <h4>{{ field.title }}</h4>
+                      <p>Type: {{ field.type }}</p>
+                      <p>Required: {{ field.isRequired ? 'Yes' : 'No' }}</p>
+                      <div class="field-actions">
+                        <button type="button" class="btn btn-sm btn-outline-primary" (click)="editField(section, field)">Edit Field</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteField(section, field.id)">Delete Field</button>
+                      </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-success" (click)="editField(section)">Add Field</button>
+
+                  </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-success" (click)="editSection(template.id)">Add Section</button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </ng-container>
+  <!-- Add/Edit Section Modal -->
+<modal #addSectionModal class="no-footer">
+  <ng-template #modalHeader>
+    <div class="!font-medium">{{ sectionParams.controls['id'].value ? 'Edit Section' : 'Add Section' }}</div>
+  </ng-template>
+  <ng-template #modalBody>
+    <form [formGroup]="sectionParams" class="text-sm" (ngSubmit)="saveSection()" ngNativeValidate>
+      <div class="mb-5">
+        <label for="sectionTitle">Title</label>
+        <input id="sectionTitle" type="text" placeholder="Enter Title" class="form-input" formControlName="title" />
+        <div *ngIf="sectionParams.controls['title'].invalid && sectionParams.controls['title'].touched" class="text-red-500">
+          <div *ngIf="sectionParams.controls['title'].errors?.['required']">Title is required.</div>
+          <div *ngIf="sectionParams.controls['title'].errors?.['minlength']">Title must be at least 3 characters long.</div>
+          <div *ngIf="sectionParams.controls['title'].errors?.['maxlength']">Title cannot be more than 100 characters long.</div>
+        </div>
+      </div>
+      <div class="mb-5">
+        <label>Type</label>
+        <div>
+          <label>
+            <input type="radio" formControlName="type" value="form" /> Form
+          </label>
+          <label>
+            <input type="radio" formControlName="type" value="table" /> Table
+          </label>
+        </div>
+        <div *ngIf="sectionParams.controls['type'].invalid && sectionParams.controls['type'].touched" class="text-red-500">
+          <div *ngIf="sectionParams.controls['type'].errors?.['required']">Type is required.</div>
+        </div>
+      </div>
+      <div class="mt-8 flex items-center justify-end">
+        <button type="button" class="btn btn-outline-danger" (click)="addSectionModal.close()">Cancel</button>
+        <button type="submit" class="btn btn-primary ltr:ml-4 rtl:ml-4">Save</button>
+      </div>
+    </form>
+  </ng-template>
+
+</modal>
+  <!-- Add/Edit Section Modal -->
+<modal #addSectionModal class="no-footer">
+  <ng-template #modalHeader>
+    <div class="!font-medium">{{ sectionParams.controls['id'].value ? 'Edit Section' : 'Add Section' }}</div>
+  </ng-template>
+  <ng-template #modalBody>
+    <form [formGroup]="sectionParams" class="text-sm" (ngSubmit)="saveSection()" ngNativeValidate>
+      <div class="mb-5">
+        <label for="sectionTitle">Title</label>
+        <input id="sectionTitle" type="text" placeholder="Enter Title" class="form-input" formControlName="title" />
+
+        <div *ngIf="sectionParams.controls['title'].invalid && sectionParams.controls['title'].touched" class="text-red-500">
+          <div *ngIf="sectionParams.controls['title'].errors?.['required']">Title is required.</div>
+        </div>
+      </div>
+      <div class="mb-5">
+        <label>Type</label>
+        <div>
+          <label>
+            <input type="radio" formControlName="type" value="form" /> Form
+          </label>
+          <label>
+            <input type="radio" formControlName="type" value="table" /> Table
+          </label>
+        </div>
+        <div *ngIf="sectionParams.controls['title'].invalid && sectionParams.controls['title'].touched" class="text-red-500">
+          <div *ngIf="sectionParams.controls['title'].errors?.['required']">Title is required.</div>
+        </div>
+      </div>
+      <div class="mt-8 flex items-center justify-end">
+        <button type="button" class="btn btn-outline-danger" (click)="addSectionModal.close()">Cancel</button>
+        <button type="submit" class="btn btn-primary ltr:ml-4 rtl:ml-4">Save</button>
+      </div>
+    </form>
+  </ng-template>
+</modal>
+ <!-- Add/Edit Field Modal -->
+<modal #addFieldModal class="no-footer">
+  <ng-template #modalHeader>
+    <div class="!font-medium">{{ fieldParams.controls['id'].value ? 'Edit Field' : 'Add Field' }}</div>
+  </ng-template>
+  <ng-template #modalBody>
+    <form [formGroup]="fieldParams" class="text-sm" (ngSubmit)="saveField()" ngNativeValidate>
+      <div class="mb-5">
+        <label for="fieldTitle">Title</label>
+        <input id="fieldTitle" type="text" placeholder="Enter Title" class="form-input" formControlName="title" />
+        <div *ngIf="fieldParams.controls['title'].invalid && fieldParams.controls['title'].touched" class="text-red-500">
+          <div *ngIf="fieldParams.controls['title'].errors?.['required']">Title is required.</div>
+          <div *ngIf="fieldParams.controls['title'].errors?.['minlength']">Title must be at least 3 characters long.</div>
+          <div *ngIf="fieldParams.controls['title'].errors?.['maxlength']">Title cannot be more than 100 characters long.</div>
+        </div>
+      </div>
+      <div class="mb-5">
+        <label for="fieldType">Type</label>
+        <select id="fieldType" class="form-select" formControlName="type">
+          <option value="Text">Text</option>
+          <option value="Number">Number</option>
+          <option value="Date">Date</option>
+          <option value="Boolean">Boolean</option>
+        </select>
+        <div *ngIf="fieldParams.controls['type'].invalid && fieldParams.controls['type'].touched" class="text-red-500">
+          <div *ngIf="fieldParams.controls['type'].errors?.['required']">Type is required.</div>
+        </div>
+      </div>
+      <div class="mb-5">
+        <label for="isRequired">Required</label>
+        <input id="isRequired" type="checkbox" formControlName="isRequired" />
+      </div>
+      <div class="mt-8 flex items-center justify-end">
+        <button type="button" class="btn btn-outline-danger" (click)="addFieldModal.close()">Cancel</button>
+        <button type="submit" class="btn btn-primary ltr:ml-4 rtl:ml-4">Save</button>
+      </div>
+    </form>
+  </ng-template>
+</modal>

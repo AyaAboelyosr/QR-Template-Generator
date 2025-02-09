@@ -1,0 +1,52 @@
+<div class="p-6 space-y-6 bg-white dark:bg-[#1b2e4b]">
+  <ng-container *ngIf="formData">
+    <div *ngFor="let section of formData.sections" class="mb-6">
+      <h2 class="text-lg font-semibold text-black dark:text-white mb-2">{{ section.sectionTitle }}</h2>
+      
+
+      <!-- Form Section -->
+      <div *ngIf="!section.isTableSection" class="space-y-4">
+        <div *ngFor="let field of section.fields" class="mb-4">
+          <label class="block text-sm font-medium text-black dark:text-white mb-1">{{ field.fieldTitle }}</label>
+          <label class="w-full p-2 bg-gray-50 border rounded-md dark:bg-[#1b2e4b]">
+            {{ section.values[field.id] || '-' }}
+          </label>
+        </div>
+      </div>
+
+      <!-- Table Section -->
+      <div *ngIf="section.isTableSection" class="space-y-4">
+        <table class="w-full border-collapse">
+          <thead>
+            <tr>
+              <th *ngFor="let field of section.fields" 
+                  class="border p-2 text-left text-black dark:text-white">
+                {{ field.fieldTitle }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of section.rows" 
+                class="hover:bg-gray-50 dark:hover:bg-[#1b2e4b]">
+              <td *ngFor="let field of section.fields" 
+                  class="border p-2 text-black dark:text-white">
+                {{ row[field.id] || '-' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="flex justify-end space-x-4 mt-6">
+    <button type="button" (click)="onEdit()" 
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+      Edit
+    </button>
+    <button type="button" (click)="onSave()" 
+            class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+      Save
+    </button>
+  </div>
+</div>

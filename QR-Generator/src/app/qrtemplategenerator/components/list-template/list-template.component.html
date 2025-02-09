@@ -1,0 +1,145 @@
+<div>
+    <div class="flex flex-wrap items-center justify-between gap-4">
+        <h2 class="text-xl">Templates</h2>
+        <div class="flex w-full flex-col gap-4 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
+            <div class="flex gap-3">
+                <div>
+                    <button type="button" class="btn btn-primary" (click)="editTemplate()">
+                        <icon-user-plus class="ltr:mr-2 rtl:ml-2" />
+                        Add Template
+                    </button>
+                </div>
+                <div>
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary p-2"
+                        [ngClass]="{ 'bg-primary text-white': displayType === 'list' }"
+                        (click)="displayType = 'list'"
+                    >
+                        <icon-list-check />
+                    </button>
+                </div>
+                <div>
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary p-2"
+                        [ngClass]="{ 'bg-primary text-white': displayType === 'grid' }"
+                        (click)="displayType = 'grid'"
+                    >
+                        <icon-layout-grid />
+                    </button>
+                </div>
+            </div>
+
+            <div class="relative">
+                <input
+                    type="text"
+                    placeholder="Search Templates"
+                    class="peer form-input py-2 ltr:pr-11 rtl:pl-11"
+                    [(ngModel)]="searchTemplate"
+                    name="searchTemplate"
+                    (ngModelChange)="searchTemplates()"
+                />
+                <div class="absolute top-1/2 -translate-y-1/2 peer-focus:text-primary ltr:right-[11px] rtl:left-[11px]">
+                    <icon-search class="mx-auto" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel mt-5 overflow-hidden border-0 p-0">
+        <ng-container *ngIf="displayType === 'list'">
+            <div class="table-responsive">
+                <table class="table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Unique Code</th>
+                            <th>Title</th>
+                           
+                            <th class="!text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngFor="let template of filteredTemplateList">
+                            <tr>
+                               
+                                <td>{{ template.title }}</td>
+                                <td>{{ template.uniqeCode }}</td>
+                                <td>
+                                    <div class="flex items-center justify-center gap-4">
+                                      
+                                        <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteTemplate(template)">Delete</button>
+                                        <a [routerLink]="['/admin/items', template.id]" 
+                                        class="btn btn-sm btn-outline-secondary"
+                                        (click)="onSelectTemplate(template)">
+                                        View Details
+                                        </a>
+
+                                    </div>
+                                </td>
+                            </tr>
+                            <div *ngIf="selectedTemplateWithSections as template">
+                                <!-- <app-template-details [template]="template"></app-template-details> -->
+                              </div>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
+        </ng-container>
+    </div>
+    <ng-container *ngIf="displayType === 'grid'">
+        <div class="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <ng-container *ngFor="let template of filteredTemplateList">
+                <div class="relative overflow-hidden rounded-md bg-white text-center shadow dark:bg-[#1c232f]">
+                    <div class="rounded-t-md bg-white/40 bg-[url('/assets/images/notification-bg.png')] bg-cover bg-center p-6 pb-0">
+                        <!-- Optional: Add an image/placeholder if needed -->
+                    </div>
+                    <div class="relative -mt-10 px-6 pb-24">
+                        <div class="rounded-md bg-white px-2 py-4 shadow-md dark:bg-gray-900">
+                            <div class="text-xl">{{ template.title }}</div>
+                            <div class="text-white-dark">{{ template.uniqeCode }}</div>
+                        </div>
+                        <div class="absolute bottom-0 mt-6 flex w-full gap-4 p-6 ltr:left-0 rtl:right-0">
+                            <button type="button" class="btn btn-outline-primary w-1/2" (click)="editTemplate(template)">Edit</button>
+                            <button type="button" class="btn btn-outline-danger w-1/2" (click)="deleteTemplate(template)">Delete</button>
+                        </div>
+                        <div *ngIf="selectedTemplateWithSections as template">
+                            <!-- <app-template-details [template]="template"></app-template-details> -->
+                          </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
+
+    <!-- Add/Edit Template Modal -->
+    <modal #addTemplateModal class="no-footer">
+        <ng-template #modalHeader>
+            <div class="!font-medium">{{ params.controls['id'].value ? 'Edit Template' : 'Add Template' }}</div>
+        </ng-template>
+        <ng-template #modalBody>
+            <form [formGroup]="params" class="text-sm" (ngSubmit)="saveTemplate()" ngNativeValidate>
+                <div class="mb-5">
+                    <label for="title">Title</label>
+                    <input id="title" type="text" placeholder="Enter Title" class="form-input" formControlName="title" />
+                    <div *ngIf="params.controls['title'].invalid && params.controls['title'].touched" class="text-red-500">
+                        <div *ngIf="params.controls['title'].errors?.['required']">Title is required.</div>
+                        <div *ngIf="params.controls['title'].errors?.['minlength']">Title must be at least 3 characters long.</div>
+                        <div *ngIf="params.controls['title'].errors?.['maxlength']">Title cannot be more than 100 characters long.</div>
+                    </div>
+                </div>
+                <div class="mb-5">
+                    <label for="uniqeCode">Unique Code</label>
+                    <input id="uniqeCode" type="text" placeholder="Enter Unique Code" class="form-input" formControlName="uniqeCode" />
+                    <div *ngIf="params.controls['uniqeCode'].invalid && params.controls['uniqeCode'].touched" class="text-red-500">
+                        <div *ngIf="params.controls['uniqeCode'].errors?.['required']">Unique Code is required.</div>
+                        <div *ngIf="params.controls['uniqeCode'].errors?.['pattern']">Unique Code must follow the pattern SI-XXX.</div>
+                    </div>
+                </div>
+                <div class="mt-8 flex items-center justify-end">
+                    <button type="button" class="btn btn-outline-danger" (click)="addTemplateModal.close()">Cancel</button>
+                    <button type="submit" class="btn btn-primary ltr:ml-4 rtl:ml-4">Save</button>
+                </div>
+            </form>
+        </ng-template>
+    </modal>
+</div>

@@ -1,0 +1,53 @@
+﻿<div [ngClass]="{ 'dark text-white-dark': store.semidark }">
+    <nav class="sidebar fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300">
+        <div class="h-full bg-white dark:bg-[#0e1726]">
+            <div class="flex items-center justify-between px-4 py-3">
+                <a routerLink="/" class="main-logo flex shrink-0 items-center">
+                    <img class="ml-[5px] w-8 flex-none" src="https://sdq.sa/uploads/settings/logo-2024-10-16-10-54-20-6838.svg" alt="" />
+                    <span class="align-middle text-2xl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">Sdq</span>
+                </a>
+                <a
+                    href="javascript:;"
+                    class="collapse-icon flex h-8 w-8 items-center rounded-full transition duration-300 hover:bg-gray-500/10 hover:text-primary rtl:rotate-180 dark:text-white-light dark:hover:bg-dark-light/10"
+                    (click)="storeData.dispatch({ type: 'toggleSidebar'})"
+                >
+                    <icon-carets-down class="m-auto rotate-90" />
+                </a>
+            </div>
+            <ul *ngIf="showContent" class="relative space-y-0.5 p-4 py-0 font-semibold">
+                <li class="menu nav-item">
+                    <a routerLink="QRCodeGenerator/qrgenerator" class="nav-link group">
+                        <div class="flex items-center">
+                            <icon-menu-documentation class="shrink-0 group-hover:!text-primary" />
+
+                            <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark"
+                                >QR Code Generator</span
+                            >
+                        </div>
+                    </a>
+
+
+                    <a routerLink="admin/list-template" class="nav-link group">
+                        <div class="flex items-center">
+                            <icon-menu-documentation class="shrink-0 group-hover:!text-primary" />
+
+                            <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark"
+                                >QR Template Generator</span
+                            >
+                        </div>
+                    </a>
+
+                    <a routerLink="auth/login" class="nav-link group">
+                        <div class="flex items-center">
+                            <icon-menu-documentation class="shrink-0 group-hover:!text-primary" />
+
+                            <span class="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark"
+                                >Login</span
+                            >
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>

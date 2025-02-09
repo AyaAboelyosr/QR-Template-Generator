@@ -1,0 +1,179 @@
+
+
+   <div class="container mx-auto p-6">
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Template Details</h2>
+        
+      
+        <form class="grid grid-cols-3 gap-4 border-b pb-4 mb-4 items-end">
+            <div>
+                <label class="font-bold block mb-1">Unique Code:</label>
+                <input type="text" [(ngModel)]="templateData.uniqeCode" name="uniqueCode"
+                       class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+   
+    <div>
+        <label class="font-bold block mb-1">Title:</label>
+        <input type="text" [(ngModel)]="templateData.title" name="title"
+               class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+
+  
+   
+  
+    <div class="flex items-end">
+        <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition" (click)="saveTemplate()">
+            Save
+        </button>
+    </div>
+</form>
+
+        
+
+        <!-- Main Table -->
+        <table class="w-full border-collapse">
+            <thead class="bg-gray-50">
+                <tr> 
+                    <th class="text-left p-3 border-b">Section Title</th>
+                    <th class="text-left p-3 border-b">Type</th>
+                    <th class="text-right p-3 border-b">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let section of templateData.sections">
+                    <!-- Section Row -->
+                    <tr class="hover:bg-gray-50 cursor-pointer border-b" (click)="toggleSection(section)">
+                        <td class="p-3">{{ section.title }}</td>
+                        <td class="p-3">{{ section.type }}</td>
+                        <td class="p-3 text-right">
+                            <div class="flex gap-3 justify-end">
+                                <button class="btn btn-sm btn-outline-primary" (click)="editSection(section); $event.stopPropagation()">Edit</button>
+                                <button class="btn btn-sm btn-outline-danger" (click)="deleteSection(section.id); $event.stopPropagation()">Delete</button>
+                                <span class="text-gray-400">|</span>
+                                <button class="btn btn-sm btn-outline-secondary">
+                                    {{ section.expanded ? 'Hide' : 'Show' }} Fields
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Fields Sub-table -->
+                    <tr *ngIf="section.expanded" class="bg-gray-50">
+                        <td colspan="3" class="p-3">
+                            <table class="w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="text-left p-2">Field Title</th>
+                                        <th class="text-left p-2">Type</th>
+                                        <th class="text-left p-2">Required</th>
+                                        <th class="text-right p-2">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let field of section.fields" class="hover:bg-gray-100">
+                                        <td class="p-2 border-t">{{ field.title }}</td>
+                                        <td class="p-2 border-t">{{ field.type }}</td>
+                                        <td class="p-2 border-t">{{ field.isRequired ? 'Yes' : 'No' }}</td>
+                                        <td class="p-2 border-t text-right">
+                                            <div class="flex gap-3 justify-end">
+                                                <button class="btn btn-sm btn-outline-primary" 
+                                                        (click)="editField(section.id, field); $event.stopPropagation()">
+                                                    Edit
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" 
+                                                        (click)="deleteField(section.id, field.id); $event.stopPropagation()">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-2 ml-2" 
+                                    (click)="openAddFieldModal(section.id); $event.stopPropagation()">
+                                + Add Field
+                            </button>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+
+        <!-- Add Section Button -->
+        <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mt-4" (click)="openAddSectionModal()">Add Section</button>
+
+        <div class="mt-4">
+            <button routerLink="/admin/list-template" class="text-blue-500 hover:underline">Back to List</button>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Add/Edit Section Modal -->
+<modal #addSectionModal class="no-footer">
+    <ng-template #modalHeader>
+        <div class="!font-medium">{{ sectionParams.controls['id'].value ? 'Edit Section' : 'Add Section' }}</div>
+    </ng-template>
+    <ng-template #modalBody>
+        <form [formGroup]="sectionParams" (ngSubmit)="saveSection()">
+            <div class="mb-5">
+                <label for="sectionTitle">Title</label>
+                <input id="sectionTitle" type="text" class="form-input" formControlName="title" placeholder="Enter Title" />
+                <div *ngIf="sectionParams.controls['title'].invalid && sectionParams.controls['title'].touched" class="text-red-500">
+                    <div *ngIf="sectionParams.controls['title'].errors?.['required']">Title is required.</div>
+                </div>
+            </div>
+            <div class="mb-5">
+                <label>Type</label>
+                <div>
+                    <label>
+                        <input type="radio" formControlName="type" value="form" /> Form
+                    </label>
+                    <label>
+                        <input type="radio" formControlName="type" value="table" /> Table
+                    </label>
+                </div>
+            </div>
+            <div class="mt-8 flex items-center justify-end">
+                <button type="button" class="btn btn-outline-danger" (click)="addSectionModal.close()">Cancel</button>
+                <button type="submit" class="btn btn-primary ltr:ml-4 rtl:ml-4">Save</button>
+            </div>
+        </form>
+    </ng-template>
+</modal>
+
+<!-- Add/Edit Field Modal -->
+<modal #addFieldModal class="no-footer">
+    <ng-template #modalHeader>
+        <div class="!font-medium">{{ fieldParams.controls['id'].value ? 'Edit Field' : 'Add Field' }}</div>
+    </ng-template>
+    <ng-template #modalBody>
+        <form [formGroup]="fieldParams" (ngSubmit)="saveField()">
+            <div class="mb-5">
+                <label for="fieldTitle">Title</label>
+                <input id="fieldTitle" type="text" class="form-input" formControlName="title" placeholder="Enter Title" />
+                <div *ngIf="fieldParams.controls['title'].invalid && fieldParams.controls['title'].touched" class="text-red-500">
+                    <div *ngIf="fieldParams.controls['title'].errors?.['required']">Title is required.</div>
+                </div>
+            </div>
+            <div class="mb-5">
+                <label for="fieldType">Type</label>
+                <select id="fieldType" class="form-select" formControlName="type">
+                    <option value="Text">Text</option>
+                    <option value="Number">Number</option>
+                    <option value="Date">Date</option>
+                    <option value="Boolean">Boolean</option>
+                </select>
+            </div>
+            <div class="mb-5">
+                <label for="isRequired">Required</label>
+                <input id="isRequired" type="checkbox" formControlName="isRequired" />
+            </div>
+            <div class="mt-8 flex items-center justify-end">
+                <button type="button" class="btn btn-outline-danger" (click)="addFieldModal.close()">Cancel</button>
+                <button type="submit" class="btn btn-primary ltr:ml-4 rtl:ml-4">Save</button>
+            </div>
+        </form>
+    </ng-template>
+</modal>

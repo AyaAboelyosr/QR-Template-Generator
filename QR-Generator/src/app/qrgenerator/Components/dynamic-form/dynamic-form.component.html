@@ -1,0 +1,58 @@
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-6 space-y-6 bg-white dark:bg-[#1b2e4b]">
+    <ng-container *ngIf="template">
+      <app-section 
+        *ngFor="let section of template.sections"
+        [section]="section"
+        [parentForm]="form"
+        [existingData]="getExistingDataForSection(section.id)">
+      </app-section>
+      
+      <div class="mt-3">
+        <span *ngIf="showError" class="text-red-500 text-sm block">Please fill all required fields</span>
+      </div>
+    
+    </ng-container>
+  
+    <div class="flex justify-between items-center w-full">
+      
+        <button 
+        type="button"
+        (click)="onShowAllTransactions()"
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      >
+        Show all transactions
+      </button>
+     
+    
+    
+      <div class="flex space-x-4">
+        <button 
+          type="button"
+          (click)="onPreview()"
+          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+          Preview
+        </button>
+        <button 
+          type="submit"
+          class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+    
+    
+   
+</form>
+<div *ngIf="isSubmitModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white dark:bg-[#1b2e4b] rounded-lg shadow-lg w-full max-w-md p-6">
+    <!-- Modal Body -->
+    <div class="my-4">
+      <p class="text-gray-600 dark:text-gray-400 text-center">
+        Form submitted successfully!
+      </p>
+    </div>
+  </div>
+</div>

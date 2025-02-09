@@ -1,0 +1,56 @@
+<div>
+    <h1>starter page</h1>
+    <button (click)="addTaskModal.open()">Add Task</button>
+    <modal #addTaskModal class="no-footer">
+        <ng-template #modalHeader>
+            <div class="!font-medium">Add Task</div>
+        </ng-template>
+        <ng-template #modalBody>
+            <form class="text-sm">
+                <div class="mb-5">
+                    <label for="title">Title</label>
+                    <input id="title" type="text" placeholder="Enter Task Title" class="form-input"
+                        formControlName="title" />
+                </div>
+                <div class="mb-5">
+                    <label for="assignee">Assignee</label>
+                    <select id="assignee" class="form-select" formControlName="assignee">
+                        <option value="">Select Assignee</option>
+                        <option value="John Smith">John Smith</option>
+                        <option value="Kia Vega">Kia Vega</option>
+                        <option value="Sandy Doe">Sandy Doe</option>
+                        <option value="Jane Foster">Jane Foster</option>
+                        <option value="Donna Frank">Donna Frank</option>
+                    </select>
+                </div>
+                <div class="mb-5 flex justify-between gap-4">
+                    <div class="flex-1">
+                        <label for="tag">Tag</label>
+                        <select id="tag" class="form-select" formControlName="tag">
+                            <option value="">Select Tag</option>
+                            <option value="team">Team</option>
+                            <option value="update">Update</option>
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label for="priority">Priority</label>
+                        <select id="priority" class="form-select" formControlName="priority">
+                            <option value="">Select Priority</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-5">
+                    <label>Description</label>
+                    <textarea #quillEditorObj placeholder="" formControlName="description" class="w-full"></textarea>
+                </div>
+                <div class="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
+                    <button type="button" class="btn btn-outline-danger" (click)="addTaskModal.close()">Cancel</button>
+                    <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">Add</button>
+                </div>
+            </form>
+        </ng-template>
+    </modal>
+</div>

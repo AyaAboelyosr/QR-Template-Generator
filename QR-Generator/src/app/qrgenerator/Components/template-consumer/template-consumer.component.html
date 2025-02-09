@@ -1,0 +1,24 @@
+<div class="dropdown">
+  <label for="template-select" class="mb-1.5 block font-semibold">Select Template</label>
+  <select
+    id="template-select"
+    class="form-select w-full rounded-md border border-[#e0e6ed] bg-white px-4 py-2 text-sm font-semibold text-black !outline-none focus:border-primary focus:ring-transparent dark:border-[#17263c] dark:bg-[#121e32] dark:text-white-dark dark:focus:border-primary"
+    (change)="onTemplateSelect($event)"
+  >
+    <option value="" disabled selected>Choose a template</option>
+    <option *ngFor="let template of templates" [value]="template.id">
+      {{ template.title }}
+    </option>
+  </select>
+  
+  <!-- Add spacing container with margin-top -->
+  <div class="mt-3">
+    <span *ngIf="showError" class="text-red-500 text-sm block">Please select a form template first</span>
+  </div>
+</div>
+
+<div class="mt-4">  <!-- Added margin-top container -->
+<button type="button" class="btn btn-primary" (click)="onAdd()">Add Transaction</button>
+</div>
+<br>
+<app-record-list></app-record-list>
